@@ -6,11 +6,15 @@ EDS Visual Testing : This code based is for Playwright-based visual regression s
 
 ```
 ├── config/
-│   ├── pages.config.ts      # TypeScript page list (used by Playwright tests)
-│   └── pages.config.js      # CommonJS mirror (used by Node.js scripts)
+│   ├── pages.config.ts          # TypeScript page list (used by Playwright tests)
+│   └── pages.config.js          # CommonJS mirror (used by Node.js scripts)
+├── report-assets/
+│   └── styles.css               # External CSS for the HTML diff report
 ├── scripts/
-│   ├── capture-screenshots.js   # Standalone screenshot capture
-│   └── generate-diff-report.js  # HTML diff report generator
+│   ├── run-visual-diff.js       # All-in-one: capture → diff → open report
+│   ├── report-builder.js        # Shared HTML report builder (used by scripts above)
+│   ├── capture-screenshots.js   # Standalone screenshot capture only
+│   └── generate-diff-report.js  # Diff + HTML report generation only
 ├── tests/
 │   ├── visual/
 │   │   └── eds-visual.spec.ts   # Playwright visual regression tests
