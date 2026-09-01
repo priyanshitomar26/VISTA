@@ -17,11 +17,7 @@ const path = require('path');
 const fs = require('fs');
 
 // Inline config so this script has no TS dependency at runtime
-const SOURCE_BASE_URL = 'https://dev.mobilityglobal.com';
-const TARGET_BASE_URL = 'https://www.mobilityglobal.com';
-
-/** @type {Array<{name: string, path: string, fullPage?: boolean, waitForSelector?: string, waitMs?: number, skip?: boolean}>} */
-const PAGES = require('../config/pages.config.js').PAGES;
+const { SOURCE_BASE_URL, TARGET_BASE_URL, PAGES } = require('../config/pages.config.js');
 
 const VIEWPORTS = [
   { label: 'desktop', width: 1440, height: 900 },
@@ -69,13 +65,12 @@ const SCREENSHOT_DIR = path.resolve('screenshots');
 /**
  * @param {import('@playwright/test').Page} page
  * @param {string} url
- * @param {object} config
+ * @param {{ waitForSelector?: string, waitMs?: number, fullPage?: boolean }} config
  * @param {string} outputPath
  */
 async function captureScreenshot(page, url, config, outputPath) {
   await page.goto(url, { waitUntil: 'load', timeout: 60_000 });
-  // Extra settle time for heavy SPAs / ad-heavy pages
-  await page.waitForTimeout(2000);
+  await new Promise(r => setTimeout(r, 2000));
 
   if (config.waitForSelector) {
     await page.waitForSelector(config.waitForSelector, { timeout: 30_000 }).catch(() => {});
@@ -94,13 +89,13 @@ async function captureScreenshot(page, url, config, outputPath) {
         if (window.scrollY + window.innerHeight >= document.body.scrollHeight) {
           clearInterval(timer);
           window.scrollTo(0, 0);
-          resolve();
+          resolve(undefined);
         }
       }, 80);
     });
   });
 
-  await page.waitForTimeout(config.waitMs ?? 500);
+  await new Promise(r => setTimeout(r, config.waitMs ?? 500));
 
   await page.screenshot({
     path: outputPath,
@@ -109,6 +104,7 @@ async function captureScreenshot(page, url, config, outputPath) {
   });
 }
 
+/** @param {string} text */
 function slugify(text) {
   return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 }
