@@ -1,4 +1,4 @@
-EDS Visual Testing : This code based is for Playwright-based visual regression suite that compares every configured EDS page on the **SOURCE** (dev) environment against the **TARGET** (production) environment.
+**EDS Visual Testing** : This code based is for Playwright-based visual regression suite that compares every configured EDS page on the **SOURCE** (dev) environment against the **TARGET** (production) environment.
 
 ---
 
