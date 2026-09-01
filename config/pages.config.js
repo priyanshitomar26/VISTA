@@ -28,12 +28,6 @@ const PAGES = [
     waitForSelector: 'main',
   },
   {
-    name: 'Solutions',
-    path: '/solutions',
-    fullPage: true,
-    waitForSelector: 'main',
-  },
-  {
     name: 'Contact',
     path: '/contact',
     fullPage: true,
