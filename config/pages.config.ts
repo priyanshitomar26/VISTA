@@ -2,20 +2,24 @@
  * EDS Page configuration for visual testing.
  * SOURCE = dev environment, TARGET = production environment.
  *
- * Add or remove pages as needed. The `path` is appended to both base URLs.
- * Set `fullPage: false` to capture only the viewport for a specific page.
- * Set `waitForSelector` to pause until a key element is visible before screenshotting.
- * Set `skip: true` to temporarily exclude a page from comparison.
+ * Every row of config/pages.xlsx (sheet "Pages") is one comparison:
+ *   S No. | SOURCE_BASE_URL | TARGET_BASE_URL | Page Name
+ * Optional columns: path, fullPage, waitForSelector, waitMs, skip, maskSelectors
+ *
+ * Edit the workbook to add/update URLs — no code changes needed.
+ * Run `npm run config:init` to create the workbook if it is missing.
  */
 
-export const SOURCE_BASE_URL = 'https://www.google.com';
-export const TARGET_BASE_URL = 'https://www.amazon.in';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { loadConfig } = require('./excel-loader.js');
 
 export interface PageConfig {
-  /** Human-readable name for reports */
+  /** Human-readable name for reports ("Page Name" column) */
   name: string;
-  /** URL path relative to base (must start with /) */
-  path: string;
+  /** Full URL of the page on the SOURCE environment */
+  sourceUrl: string;
+  /** Full URL of the page on the TARGET environment */
+  targetUrl: string;
   /** Capture entire scrollable page — defaults to true */
   fullPage?: boolean;
   /** CSS selector to wait for before screenshotting */
@@ -28,36 +32,19 @@ export interface PageConfig {
   maskSelectors?: string[];
 }
 
-export const PAGES: PageConfig[] = [
-  {
-    name: 'Home',
-    path: '/',
-    fullPage: true,
-    waitForSelector: 'body',
-    maskSelectors: [],
-  },
-  {
-    name: 'About Us',
-    path: '/about-us',
-    fullPage: true,
-    waitForSelector: 'main',
-  },
-  {
-    name: 'Products',
-    path: '/products',
-    fullPage: true,
-    waitForSelector: 'main',
-  },
-  {
-    name: 'Contact',
-    path: '/contact',
-    fullPage: true,
-    waitForSelector: 'main',
-  },
-  // Add more pages below:
-  // { name: 'Blog', path: '/blog', fullPage: true },
-  // { name: 'Careers', path: '/careers', fullPage: true },
-];
+interface ExcelConfig {
+  SOURCE_BASE_URL: string;
+  TARGET_BASE_URL: string;
+  PAGES: PageConfig[];
+}
+
+const config: ExcelConfig = loadConfig();
+
+/** First SOURCE URL in the workbook — used for report headers only */
+export const SOURCE_BASE_URL: string = config.SOURCE_BASE_URL;
+/** First TARGET URL in the workbook — used for report headers only */
+export const TARGET_BASE_URL: string = config.TARGET_BASE_URL;
+export const PAGES: PageConfig[] = config.PAGES;
 
 /** Viewports used in the capture scripts (separate from Playwright projects) */
 export const VIEWPORTS = {

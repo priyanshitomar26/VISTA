@@ -10,18 +10,17 @@ const CSS_SRC = path.resolve(__dirname, '../report-assets/styles.css');
 
 /**
  * @param {Array<{page:string,viewport:string,diffPixels:number,totalPixels:number,
- *   diffPct:number,sourceSrc:string,targetSrc:string,diffSrc:string}>} results
- * @param {string} sourceUrl
- * @param {string} targetUrl
+ *   diffPct:number,sourceSrc:string,targetSrc:string,diffSrc:string,
+ *   sourceUrl?:string,targetUrl?:string}>} results
  * @param {string} outDir  directory to write index.html + styles.css into
  */
-function buildReport(results, sourceUrl, targetUrl, outDir) {
+function buildReport(results, outDir) {
   fs.mkdirSync(outDir, { recursive: true });
 
   // Copy CSS next to the HTML so the <link> works when opened as a local file
   fs.copyFileSync(CSS_SRC, path.join(outDir, 'styles.css'));
 
-  const html = buildHTML(results, sourceUrl, targetUrl);
+  const html = buildHTML(results);
   const htmlPath = path.join(outDir, 'index.html');
   fs.writeFileSync(htmlPath, html);
   return htmlPath;
@@ -29,11 +28,9 @@ function buildReport(results, sourceUrl, targetUrl, outDir) {
 
 /**
  * @param {Array<object>} results
- * @param {string} sourceUrl
- * @param {string} targetUrl
  * @returns {string}
  */
-function buildHTML(results, sourceUrl, targetUrl) {
+function buildHTML(results) {
   const pass = results.filter(r => r.diffPct < 0.5).length;
   const fail = results.length - pass;
   const date = new Date().toLocaleString();
@@ -55,12 +52,12 @@ function buildHTML(results, sourceUrl, targetUrl) {
         </li>`;
     }).join('\n        ');
     return `<li class="vp-group" id="${vpId}">
-        <button class="vp-heading" aria-expanded="true" data-target="${vpId}-list">
+        <button class="vp-heading" aria-expanded="false" data-target="${vpId}-list">
           <svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 3l3 4 3-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
           ${vp.charAt(0).toUpperCase() + vp.slice(1)}
           <span class="vp-count">${items.length}</span>
         </button>
-        <ul id="${vpId}-list">
+        <ul id="${vpId}-list" class="collapsed">
           ${pageLinks}
         </ul>
       </li>`;
@@ -70,6 +67,12 @@ function buildHTML(results, sourceUrl, targetUrl) {
   const cards = results.map(r => {
     const cls = r.diffPct < 0.5 ? 'pass' : 'fail';
     const id  = cardId(r);
+    const sourceCaption = r.sourceUrl
+      ? `SOURCE — <a href="${r.sourceUrl}" target="_blank" rel="noopener noreferrer">${r.sourceUrl}</a>`
+      : 'SOURCE';
+    const targetCaption = r.targetUrl
+      ? `TARGET — <a href="${r.targetUrl}" target="_blank" rel="noopener noreferrer">${r.targetUrl}</a>`
+      : 'TARGET';
     return `
     <section class="card ${cls}" id="${id}">
       <div class="card-header">
@@ -78,8 +81,8 @@ function buildHTML(results, sourceUrl, targetUrl) {
         <span class="meta">${r.diffPct.toFixed(3)}% diff &nbsp;(${r.diffPixels.toLocaleString()} / ${r.totalPixels.toLocaleString()} px)</span>
       </div>
       <div class="images">
-        <figure><figcaption>SOURCE</figcaption><img src="${r.sourceSrc}" loading="lazy" alt="source"></figure>
-        <figure><figcaption>TARGET</figcaption><img src="${r.targetSrc}" loading="lazy" alt="target"></figure>
+        <figure><figcaption>${sourceCaption}</figcaption><img src="${r.sourceSrc}" loading="lazy" alt="source"></figure>
+        <figure><figcaption>${targetCaption}</figcaption><img src="${r.targetSrc}" loading="lazy" alt="target"></figure>
         <figure><figcaption>DIFF</figcaption><img src="${r.diffSrc}" loading="lazy" alt="diff"></figure>
       </div>
     </section>`;
@@ -99,8 +102,6 @@ function buildHTML(results, sourceUrl, targetUrl) {
   <div class="main-content">
     <header>
       <h1>Visual Diff Report</h1>
-      <p>SOURCE: <strong>${sourceUrl}</strong></p>
-      <p>TARGET: <strong>${targetUrl}</strong></p>
       <p>Generated: ${date}</p>
     </header>
 
@@ -161,6 +162,12 @@ function buildHTML(results, sourceUrl, targetUrl) {
         });
         // hide the whole group heading if nothing inside matches
         group.classList.toggle('hidden', groupVisible === 0);
+        // auto-expand while searching, collapse again when the box is cleared
+        const btn  = group.querySelector('.vp-heading');
+        const list = group.querySelector('ul');
+        const open = Boolean(q) && groupVisible > 0;
+        btn.setAttribute('aria-expanded', String(open));
+        list.classList.toggle('collapsed', !open);
         totalVisible += groupVisible;
       });
 

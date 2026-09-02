@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "description": "EDS Page Visual Testing — dev.mobilityglobal.com vs www.mobilityglobal.com",
   "scripts": {
+    "config:init": "node scripts/generate-pages-excel.js",
+    "config:reset": "node scripts/generate-pages-excel.js --force",
     "test": "playwright test",
     "test:headed": "playwright test --headed",
     "test:ui": "playwright test --ui",
@@ -17,6 +19,7 @@
     "clean": "rimraf test-results playwright-report screenshots diff-report"
   },
   "dependencies": {
+    "@e965/xlsx": "^0.20.3",
     "pixelmatch": "^5.3.0",
     "pngjs": "^7.0.0"
   },

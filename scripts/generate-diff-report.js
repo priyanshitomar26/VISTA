@@ -16,11 +16,14 @@ const path = require('path');
 const { PNG } = require('pngjs');
 const pixelmatch = require('pixelmatch');
 const { buildReport } = require('./report-builder');
-const { SOURCE_BASE_URL, TARGET_BASE_URL } = require('../config/pages.config.js');
+const { PAGES } = require('../config/pages.config.js');
 
 const SCREENSHOT_DIR = path.resolve('screenshots');
 const REPORT_DIR     = path.resolve('diff-report');
 const THRESHOLD      = 0.1; // per-pixel colour tolerance
+
+/** slug → page config, so each card can show its own URL pair */
+const PAGE_BY_SLUG = new Map(PAGES.map((p) => [slugify(p.name), p]));
 
 fs.mkdirSync(REPORT_DIR, { recursive: true });
 
@@ -45,6 +48,11 @@ for (const viewport of viewportDirs) {
     .map(d => d.name);
 
   for (const slug of pageDirs) {
+    if (!PAGE_BY_SLUG.has(slug)) {
+      console.warn(`  [SKIP] ${viewport}/${slug} is not in pages.xlsx`);
+      continue;
+    }
+
     const dir = path.join(vpDir, slug);
     const sourcePath = path.join(dir, 'source.png');
     const targetPath = path.join(dir, 'target.png');
@@ -81,6 +89,8 @@ for (const viewport of viewportDirs) {
       diffPixels,
       totalPixels,
       diffPct,
+      sourceUrl:   PAGE_BY_SLUG.get(slug)?.sourceUrl,
+      targetUrl:   PAGE_BY_SLUG.get(slug)?.targetUrl,
       sourceSrc:   toDataURL(sourcePath),
       targetSrc:   toDataURL(targetPath),
       diffSrc:     toDataURL(diffPath),
@@ -92,7 +102,7 @@ for (const viewport of viewportDirs) {
 }
 
 // Write HTML report + styles.css
-const reportPath = buildReport(results, SOURCE_BASE_URL, TARGET_BASE_URL, REPORT_DIR);
+const reportPath = buildReport(results, REPORT_DIR);
 console.log(`\nReport saved → ${reportPath}`);
 
 // ---------------------------------------------------------------------------
@@ -107,5 +117,9 @@ function padImage(img, w, h) {
 
 function toDataURL(filePath) {
   return `data:image/png;base64,${fs.readFileSync(filePath).toString('base64')}`;
+}
+
+function slugify(text) {
+  return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 }
 

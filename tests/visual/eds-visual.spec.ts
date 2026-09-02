@@ -1,12 +1,7 @@
 import { test, expect } from '@playwright/test';
 import path from 'path';
 import fs from 'fs';
-import {
-  PAGES,
-  SOURCE_BASE_URL,
-  TARGET_BASE_URL,
-  PageConfig,
-} from '../../config/pages.config';
+import { PAGES } from '../../config/pages.config';
 import { navigateAndWait, buildMasks, slugify } from '../../utils/page-helpers';
 
 /**
@@ -27,9 +22,8 @@ for (const pageConfig of PAGES) {
 
   test.describe(`Visual: ${pageConfig.name}`, () => {
     // ------------------------------------------------------------------ TARGET
-    test(`TARGET baseline — ${pageConfig.name} [${pageConfig.path}]`, async ({ page }, testInfo) => {
-      const url = `${TARGET_BASE_URL}${pageConfig.path}`;
-      await navigateAndWait(page, url, pageConfig);
+    test(`TARGET baseline — ${pageConfig.name}`, async ({ page }, testInfo) => {
+      await navigateAndWait(page, pageConfig.targetUrl, pageConfig);
 
       const masks = buildMasks(page, pageConfig.maskSelectors);
       const snapshotName = `${slugify(pageConfig.name)}-target.png`;
@@ -42,9 +36,8 @@ for (const pageConfig of PAGES) {
     });
 
     // ------------------------------------------------------------------ SOURCE
-    test(`SOURCE vs TARGET — ${pageConfig.name} [${pageConfig.path}]`, async ({ page }, testInfo) => {
-      const url = `${SOURCE_BASE_URL}${pageConfig.path}`;
-      await navigateAndWait(page, url, pageConfig);
+    test(`SOURCE vs TARGET — ${pageConfig.name}`, async ({ page }, testInfo) => {
+      await navigateAndWait(page, pageConfig.sourceUrl, pageConfig);
 
       const masks = buildMasks(page, pageConfig.maskSelectors);
       // Compare SOURCE screenshot against the TARGET baseline snapshot

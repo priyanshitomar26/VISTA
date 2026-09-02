@@ -17,7 +17,7 @@ const path = require('path');
 const fs = require('fs');
 
 // Inline config so this script has no TS dependency at runtime
-const { SOURCE_BASE_URL, TARGET_BASE_URL, PAGES } = require('../config/pages.config.js');
+const { PAGES } = require('../config/pages.config.js');
 
 const VIEWPORTS = [
   { label: 'desktop', width: 1440, height: 900 },
@@ -45,13 +45,13 @@ const SCREENSHOT_DIR = path.resolve('screenshots');
       fs.mkdirSync(dir, { recursive: true });
 
       if (mode === 'source' || mode === 'all') {
-        console.log(`[SOURCE][${viewport.label}] ${pageConfig.name} → ${pageConfig.path}`);
-        await captureScreenshot(page, SOURCE_BASE_URL + pageConfig.path, pageConfig, path.join(dir, 'source.png'));
+        console.log(`[SOURCE][${viewport.label}] ${pageConfig.name} → ${pageConfig.sourceUrl}`);
+        await captureScreenshot(page, pageConfig.sourceUrl, pageConfig, path.join(dir, 'source.png'));
       }
 
       if (mode === 'target' || mode === 'all') {
-        console.log(`[TARGET][${viewport.label}] ${pageConfig.name} → ${pageConfig.path}`);
-        await captureScreenshot(page, TARGET_BASE_URL + pageConfig.path, pageConfig, path.join(dir, 'target.png'));
+        console.log(`[TARGET][${viewport.label}] ${pageConfig.name} → ${pageConfig.targetUrl}`);
+        await captureScreenshot(page, pageConfig.targetUrl, pageConfig, path.join(dir, 'target.png'));
       }
     }
 

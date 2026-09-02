@@ -6,11 +6,14 @@
 
 ```
 ├── config/
-│   ├── pages.config.ts          # TypeScript page list (used by Playwright tests)
-│   └── pages.config.js          # CommonJS mirror (used by Node.js scripts)
+│   ├── pages.xlsx               # SOURCE/TARGET URLs + page list (edit this)
+│   ├── excel-loader.js          # Reads pages.xlsx
+│   ├── pages.config.ts          # TypeScript entry (used by Playwright tests)
+│   └── pages.config.js          # CommonJS entry (used by Node.js scripts)
 ├── report-assets/
 │   └── styles.css               # External CSS for the HTML diff report
 ├── scripts/
+│   ├── generate-pages-excel.js  # Creates config/pages.xlsx template
 │   ├── run-visual-diff.js       # All-in-one: capture → diff → open report
 │   ├── report-builder.js        # Shared HTML report builder (used by scripts above)
 │   ├── capture-screenshots.js   # Standalone screenshot capture only
@@ -37,6 +40,7 @@
 ```bash
 npm install
 npx playwright install chromium firefox
+npm run config:init   # creates config/pages.xlsx if missing
 ```
 
 ### 2. Workflow A — Playwright Visual Regression (recommended)
@@ -78,17 +82,38 @@ npm run capture:source   # SOURCE only
 npm run capture:target   # TARGET only
 ```
 
+Or run capture + diff + open report in one step:
+
+```bash
+npm run diff             # all viewports
+npm run diff:desktop     # desktop only
+npm run diff:mobile      # mobile only
+```
+
+### Reading the diff report
+
+- Each card shows the exact SOURCE and TARGET URL that was captured for that row.
+- The sidebar groups results by viewport and starts collapsed — click **Desktop** / **Mobile** to expand, or type in the search box to auto-expand matches.
+- Screenshot folders for pages no longer listed in `pages.xlsx` are skipped and reported as `[SKIP]`. Run `npm run clean` to remove them.
+
 ---
 
 ## Adding / Removing Pages
 
-Edit `config/pages.config.ts` (and its `config/pages.config.js` mirror):
+Open `config/pages.xlsx` (sheet **Pages**) and add a row — one row = one comparison:
 
-```ts
-{ name: 'Blog', path: '/blog', fullPage: true, waitForSelector: 'main' },
-```
+| S No. | SOURCE_BASE_URL | TARGET_BASE_URL | Page Name | fullPage | waitForSelector | waitMs | skip | maskSelectors |
+|---|---|---|---|---|---|---|---|---|
+| 1 | https://www.google.com | https://www.amazon.in | Home | TRUE | body | | FALSE | |
+| 2 | https://certification.adobe.com/courses | https://certification.adobe.com/courses/1064 | Course Page | TRUE | body | | FALSE | .ad-slot, .carousel |
 
-Set `skip: true` to temporarily exclude a page without deleting it.
+- `SOURCE_BASE_URL` / `TARGET_BASE_URL` are the **full URLs** to compare — they can point at different sites entirely.
+- If a row leaves a URL blank, the first row's URL is used. An optional `path` column is appended to the URL when present.
+- `fullPage` / `skip` accept `TRUE`/`FALSE` (defaults: `fullPage` TRUE, `skip` FALSE).
+- `maskSelectors` is a comma-separated list of CSS selectors.
+- Set `skip` to `TRUE` to temporarily exclude a row without deleting it.
+
+Just save the workbook and re-run any command — no code changes needed. Run `npm run config:reset` to regenerate the workbook from defaults (overwrites it).
 
 ---
 
@@ -96,7 +121,7 @@ Set `skip: true` to temporarily exclude a page without deleting it.
 
 | File | What to change |
 |---|---|
-| `config/pages.config.ts` | Add/remove pages, adjust selectors, mask dynamic elements |
+| `config/pages.xlsx` | SOURCE/TARGET URLs, add/remove pages, selectors, masked elements |
 | `playwright.config.ts` | Diff threshold (`maxDiffPixelRatio`), viewports, browsers |
 | `scripts/generate-diff-report.js` | `THRESHOLD` constant (per-pixel colour tolerance) |
 

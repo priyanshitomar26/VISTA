@@ -17,11 +17,14 @@ const path         = require('path');
 const { execSync } = require('child_process');
 const { buildReport } = require('./report-builder');
 
-const { SOURCE_BASE_URL, TARGET_BASE_URL, PAGES } = require('../config/pages.config.js');
+const { PAGES } = require('../config/pages.config.js');
 
 const SCREENSHOT_DIR = path.resolve('screenshots');
 const REPORT_DIR     = path.resolve('diff-report');
 const THRESHOLD      = 0.1;
+
+/** slug → page config, so each card can show its own URL pair */
+const PAGE_BY_SLUG = new Map(PAGES.map((p) => [slugify(p.name), p]));
 
 const VIEWPORTS = [
   { label: 'desktop', width: 1440, height: 900  },
@@ -36,8 +39,9 @@ const activeViewports = viewportFilter
 (async () => {
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
   console.log(' EDS Visual Diff — capture + compare');
-  console.log(`  SOURCE : ${SOURCE_BASE_URL}`);
-  console.log(`  TARGET : ${TARGET_BASE_URL}`);
+  for (const p of PAGES.filter((p) => !p.skip)) {
+    console.log(`  ${p.name}: ${p.sourceUrl}  vs  ${p.targetUrl}`);
+  }
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
 
   // ── Step 1: Capture ──────────────────────────────────────────────────────
@@ -57,8 +61,7 @@ const activeViewports = viewportFilter
       const dir  = path.join(SCREENSHOT_DIR, vp.label, slug);
       fs.mkdirSync(dir, { recursive: true });
 
-      for (const [env, baseUrl] of [['source', SOURCE_BASE_URL], ['target', TARGET_BASE_URL]]) {
-        const url  = baseUrl + pageConfig.path;
+      for (const [env, url] of [['source', pageConfig.sourceUrl], ['target', pageConfig.targetUrl]]) {
         const dest = path.join(dir, `${env}.png`);
         process.stdout.write(`  [${env.toUpperCase()}][${vp.label}] ${pageConfig.name} … `);
         await capture(page, url, pageConfig, dest);
@@ -86,6 +89,8 @@ const activeViewports = viewportFilter
       .filter(d => d.isDirectory()).map(d => d.name);
 
     for (const slug of pageDirs) {
+      if (!PAGE_BY_SLUG.has(slug)) continue;
+
       const dir        = path.join(SCREENSHOT_DIR, vp, slug);
       const sourcePath = path.join(dir, 'source.png');
       const targetPath = path.join(dir, 'target.png');
@@ -116,6 +121,8 @@ const activeViewports = viewportFilter
       results.push({
         page: slug, viewport: vp,
         diffPixels: diffPx, totalPixels: total, diffPct: pct,
+        sourceUrl: PAGE_BY_SLUG.get(slug)?.sourceUrl,
+        targetUrl: PAGE_BY_SLUG.get(slug)?.targetUrl,
         sourceSrc: toDataURL(sourcePath),
         targetSrc: toDataURL(targetPath),
         diffSrc:   toDataURL(diffPath),
@@ -123,7 +130,7 @@ const activeViewports = viewportFilter
     }
   }
 
-  const reportPath = buildReport(results, SOURCE_BASE_URL, TARGET_BASE_URL, REPORT_DIR);
+  const reportPath = buildReport(results, REPORT_DIR);
   console.log(`\n  Report saved → ${reportPath}`);
 
   // ── Step 3: Open browser ─────────────────────────────────────────────────

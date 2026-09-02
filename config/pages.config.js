@@ -1,40 +1,15 @@
 /**
- * CommonJS mirror of config/pages.config.ts — used by plain Node.js scripts.
- * Keep in sync with config/pages.config.ts.
+ * CommonJS config entry — used by plain Node.js scripts.
+ * Base URLs and the page list live in config/pages.xlsx; edit the workbook,
+ * not this file. Run `npm run config:init` if the workbook is missing.
  */
 
-const SOURCE_BASE_URL = 'https://www.google.com';
-const TARGET_BASE_URL = 'https://www.amazon.in';
+// @ts-check
+const { loadConfig } = require('./excel-loader.js');
 
-/** @type {Array<import('./pages.config').PageConfig>} */
-const PAGES = [
-  {
-    name: 'Home',
-    path: '/',
-    fullPage: true,
-    waitForSelector: 'body',
-    maskSelectors: [],
-  },
-  {
-    name: 'About Us',
-    path: '/about-us',
-    fullPage: true,
-    waitForSelector: 'main',
-  },
-  {
-    name: 'Products',
-    path: '/products',
-    fullPage: true,
-    waitForSelector: 'main',
-  },
-  {
-    name: 'Contact',
-    path: '/contact',
-    fullPage: true,
-    waitForSelector: 'main',
-  },
-];
+const { SOURCE_BASE_URL, TARGET_BASE_URL, PAGES } = loadConfig();
 
+/** Viewports used in the capture scripts (separate from Playwright projects) */
 const VIEWPORTS = {
   desktop: { width: 1440, height: 900 },
   tablet:  { width: 768,  height: 1024 },

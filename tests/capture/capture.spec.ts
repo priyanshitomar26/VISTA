@@ -1,10 +1,6 @@
 import { test, expect } from '@playwright/test';
 import path from 'path';
-import {
-  PAGES,
-  SOURCE_BASE_URL,
-  TARGET_BASE_URL,
-} from '../../config/pages.config';
+import { PAGES } from '../../config/pages.config';
 import { navigateAndWait, buildMasks, slugify } from '../../utils/page-helpers';
 
 /**
@@ -27,7 +23,7 @@ for (const pageConfig of PAGES) {
       const dir = path.join(SCREENSHOT_DIR, browserName, slug);
       await page.context().browser()?.newPage();
 
-      await navigateAndWait(page, `${SOURCE_BASE_URL}${pageConfig.path}`, pageConfig);
+      await navigateAndWait(page, pageConfig.sourceUrl, pageConfig);
       const masks = buildMasks(page, pageConfig.maskSelectors);
 
       const screenshotPath = path.join(dir, 'source.png');
@@ -49,7 +45,7 @@ for (const pageConfig of PAGES) {
       const slug = slugify(pageConfig.name);
       const dir = path.join(SCREENSHOT_DIR, browserName, slug);
 
-      await navigateAndWait(page, `${TARGET_BASE_URL}${pageConfig.path}`, pageConfig);
+      await navigateAndWait(page, pageConfig.targetUrl, pageConfig);
       const masks = buildMasks(page, pageConfig.maskSelectors);
 
       const screenshotPath = path.join(dir, 'target.png');
