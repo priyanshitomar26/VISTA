@@ -92,9 +92,11 @@ npm run diff:mobile      # mobile only
 
 ### Reading the diff report
 
+- Cards appear in the same order as the **S No.** rows in `pages.xlsx`, grouped by viewport.
 - Each card shows the exact SOURCE and TARGET URL that was captured for that row.
 - The sidebar groups results by viewport and starts collapsed — click **Desktop** / **Mobile** to expand, or type in the search box to auto-expand matches.
-- Screenshot folders for pages no longer listed in `pages.xlsx` are skipped and reported as `[SKIP]`. Run `npm run clean` to remove them.
+- Rows removed from `pages.xlsx` are ignored even if their old screenshots are still on disk. Run `npm run clean` to remove them.
+- Every run overwrites `diff-report/index.html` and the PNGs under `screenshots/` — no history is kept.
 
 ---
 

@@ -9,9 +9,21 @@ const path = require('path');
 const CSS_SRC = path.resolve(__dirname, '../report-assets/styles.css');
 
 /**
- * @param {Array<{page:string,viewport:string,diffPixels:number,totalPixels:number,
- *   diffPct:number,sourceSrc:string,targetSrc:string,diffSrc:string,
- *   sourceUrl?:string,targetUrl?:string}>} results
+ * @typedef {object} DiffResult
+ * @property {string} page
+ * @property {string} viewport
+ * @property {number} diffPixels
+ * @property {number} totalPixels
+ * @property {number} diffPct
+ * @property {string} sourceSrc
+ * @property {string} targetSrc
+ * @property {string} diffSrc
+ * @property {string} [sourceUrl]
+ * @property {string} [targetUrl]
+ */
+
+/**
+ * @param {DiffResult[]} results
  * @param {string} outDir  directory to write index.html + styles.css into
  */
 function buildReport(results, outDir) {
@@ -27,7 +39,7 @@ function buildReport(results, outDir) {
 }
 
 /**
- * @param {Array<object>} results
+ * @param {DiffResult[]} results
  * @returns {string}
  */
 function buildHTML(results) {
@@ -36,6 +48,7 @@ function buildHTML(results) {
   const date = new Date().toLocaleString();
 
   // Group results by viewport then build grouped nav
+  /** @type {Record<string, DiffResult[]>} */
   const byViewport = {};
   results.forEach(r => {
     if (!byViewport[r.viewport]) byViewport[r.viewport] = [];
@@ -93,7 +106,7 @@ function buildHTML(results) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Visual Diff Report</title>
+  <title>Visual Comparison Report</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -101,7 +114,7 @@ function buildHTML(results) {
   <!-- ── Main content ─────────────────────────────────────────── -->
   <div class="main-content">
     <header>
-      <h1>Visual Diff Report</h1>
+      <h1>Visual Comparison Report</h1>
       <p>Generated: ${date}</p>
     </header>
 
@@ -199,7 +212,9 @@ function buildHTML(results) {
 </html>`;
 }
 
-/** Stable anchor id for a result card */
+/** Stable anchor id for a result card
+ * @param {DiffResult} r
+ */
 function cardId(r) {
   return `${r.viewport}-${r.page}`.replace(/[^a-z0-9-]/gi, '-');
 }

@@ -23,9 +23,6 @@ const SCREENSHOT_DIR = path.resolve('screenshots');
 const REPORT_DIR     = path.resolve('diff-report');
 const THRESHOLD      = 0.1;
 
-/** slug → page config, so each card can show its own URL pair */
-const PAGE_BY_SLUG = new Map(PAGES.map((p) => [slugify(p.name), p]));
-
 const VIEWPORTS = [
   { label: 'desktop', width: 1440, height: 900  },
   { label: 'mobile',  width: 375,  height: 812  },
@@ -78,19 +75,18 @@ const activeViewports = viewportFilter
   console.log('\n  Building diff report …');
   fs.mkdirSync(REPORT_DIR, { recursive: true });
 
-  /** @type {Array<object>} */
+  /** @type {import('./report-builder').DiffResult[]} */
   const results = [];
 
   const vpDirs = fs.readdirSync(SCREENSHOT_DIR, { withFileTypes: true })
     .filter(d => d.isDirectory()).map(d => d.name);
 
   for (const vp of vpDirs) {
-    const pageDirs = fs.readdirSync(path.join(SCREENSHOT_DIR, vp), { withFileTypes: true })
-      .filter(d => d.isDirectory()).map(d => d.name);
+    // Iterate in workbook (S No.) order so the report matches pages.xlsx
+    for (const pageConfig of PAGES) {
+      if (pageConfig.skip) continue;
 
-    for (const slug of pageDirs) {
-      if (!PAGE_BY_SLUG.has(slug)) continue;
-
+      const slug       = slugify(pageConfig.name);
       const dir        = path.join(SCREENSHOT_DIR, vp, slug);
       const sourcePath = path.join(dir, 'source.png');
       const targetPath = path.join(dir, 'target.png');
@@ -121,8 +117,8 @@ const activeViewports = viewportFilter
       results.push({
         page: slug, viewport: vp,
         diffPixels: diffPx, totalPixels: total, diffPct: pct,
-        sourceUrl: PAGE_BY_SLUG.get(slug)?.sourceUrl,
-        targetUrl: PAGE_BY_SLUG.get(slug)?.targetUrl,
+        sourceUrl: pageConfig.sourceUrl,
+        targetUrl: pageConfig.targetUrl,
         sourceSrc: toDataURL(sourcePath),
         targetSrc: toDataURL(targetPath),
         diffSrc:   toDataURL(diffPath),
@@ -136,7 +132,7 @@ const activeViewports = viewportFilter
   // ── Step 3: Open browser ─────────────────────────────────────────────────
   console.log('  Opening report in browser …\n');
   try {
-    execSync(`start "" "${reportPath}"`, { stdio: 'ignore', shell: true });
+    execSync(`start "" "${reportPath}"`, { stdio: 'ignore' });
   } catch {
     console.log(`  Open manually: ${reportPath}`);
   }
@@ -144,6 +140,12 @@ const activeViewports = viewportFilter
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
+/**
+ * @param {import('@playwright/test').Page} page
+ * @param {string} url
+ * @param {{ waitForSelector?: string, waitMs?: number, fullPage?: boolean }} config
+ * @param {string} outputPath
+ */
 async function capture(page, url, config, outputPath) {
   await page.goto(url, { waitUntil: 'load', timeout: 60_000 });
   // Extra settle time for heavy SPAs / ad-heavy pages
@@ -165,7 +167,7 @@ async function capture(page, url, config, outputPath) {
         if (window.scrollY + window.innerHeight >= document.body.scrollHeight) {
           clearInterval(t);
           window.scrollTo(0, 0);
-          resolve();
+          resolve(undefined);
         }
       }, 80);
     });
@@ -175,6 +177,11 @@ async function capture(page, url, config, outputPath) {
   await page.screenshot({ path: outputPath, fullPage: config.fullPage !== false, animations: 'disabled' });
 }
 
+/**
+ * @param {import('pngjs').PNG} img
+ * @param {number} w
+ * @param {number} h
+ */
 function padImage(img, w, h) {
   if (img.width === w && img.height === h) return img;
   const out = new PNG({ width: w, height: h });
@@ -183,10 +190,12 @@ function padImage(img, w, h) {
   return out;
 }
 
+/** @param {string} p */
 function toDataURL(p) {
   return `data:image/png;base64,${fs.readFileSync(p).toString('base64')}`;
 }
 
+/** @param {string} t */
 function slugify(t) {
   return t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 }
