@@ -1,0 +1,141 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Sanity Test Report</title><link rel="stylesheet" href="styles.css"><style>
+    .sanity-details { display:grid; grid-template-columns:auto 1fr; gap:.65rem 1rem; padding:1rem 1.4rem; color:var(--muted); font-size:.86rem; }
+    .sanity-details a { color:var(--txt); word-break:break-all; }
+    .sanity-details pre { grid-column:1 / -1; white-space:pre-wrap; color:#fecaca; background:#351b25; border:1px solid #7f1d1d; border-radius:6px; padding:.8rem; font:inherit; }
+    .check-ok { color:var(--pass); }
+    #nav-list > li { list-style:none; margin-bottom:.35rem; }
+    #nav-list > li > a { display:block; line-height:1.35; }
+    #nav-list > li > a span { color:var(--muted); font-size:.72rem; word-break:break-all; }
+  </style></head><body><div class="main-content"><header><h1>Sanity Test Report</h1><p>Generated: 22/9/2026, 6:10:06 pm</p></header><div class="summary"><div class="stat pass-s"><span>70</span><label>Passed Checks</label></div><div class="stat fail-s"><span>5</span><label>Failed Checks</label></div><div class="stat"><span>4</span><label>Pages</label></div></div><section class="card sanity-page fail" id="page-0">
+      <button class="page-summary" type="button" aria-expanded="false" aria-controls="page-details-0">
+        <span><strong>Page Name :</strong> Home</span>
+        <span><strong>Page URL :</strong> https://www.mobilityglobal.com/</span>
+        <span class="summary-chevron">+</span>
+      </button>
+      <div class="page-details" id="page-details-0" hidden>
+        <div class="sanity-grid">
+          <div class="sanity-row"><span>Page Title :</span><strong>Home | Mobility Global</strong></div>
+          <div class="sanity-row"><span>Page Description :</span><strong>Understand the forces shaping mobility today, powered by the industry’s most extensive global analyst team.</strong></div>
+          <div class="sanity-row"><span>Page Speed :</span><strong>3989 ms</strong></div>
+          <div class="sanity-row"><span>Page URL :</span><a href="https://www.mobilityglobal.com/" target="_blank" rel="noopener noreferrer">https://www.mobilityglobal.com/</a></div>
+          <div class="sanity-row"><span>Website Load Successfully</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Header Visible</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Footer Visible</span><strong class="check-fail">Fail</strong><pre>Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeAttached[2m([22m[2m)[22m failed
+
+Locator: locator(&#39;footer.footer-wrapper, footer.footer-wrapper &gt; .footer.block[data-block-name=&quot;footer&quot;]&#39;).first()
+Expected: attached
+Timeout: 20000ms
+Error: element(s) not found
+
+Call log:
+[2m  - Expect &quot;toBeAttached&quot; with timeout 20000ms[22m
+[2m  - waiting for locator(&#39;footer.footer-wrapper, footer.footer-wrapper &gt; .footer.block[data-block-name=&quot;footer&quot;]&#39;).first()[22m
+</pre></div><div class="sanity-row"><span>Logo is Clickable</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Any Critical console Errors</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Search is working</span><strong class="check-fail">Fail</strong><pre>TimeoutError: locator.click: Timeout 30000ms exceeded.
+Call log:
+[2m  - waiting for getByRole(&#39;button&#39;, { name: /search/i }).first()[22m
+[2m    - locator resolved to &lt;a role=&quot;button&quot; title=&quot;Search&quot; aria-label=&quot;Search&quot; class=&quot;nav-search-btn&quot; href=&quot;https://www.mobilityglobal.com/en-us/search&quot;&gt;…&lt;/a&gt;[22m
+[2m  - attempting click action[22m
+[2m    - waiting for element to be visible, enabled and stable[22m
+[2m    - element is visible, enabled and stable[22m
+[2m    - scrolling into view if needed[22m
+[2m    - done scrolling[22m
+[2m    - performing click action[22m
+[2m    - click action done[22m
+[2m    - waiting for scheduled navigations to finish[22m
+</pre></div><div class="sanity-row"><span>Open Graph Metadata</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Website Load Successfully</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Header Visible</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Footer Visible</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Logo is Clickable</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Any Critical console Errors</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Search is working</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Open Graph Metadata</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Website Load Successfully</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Header Visible</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Footer Visible</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Logo is Clickable</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Any Critical console Errors</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Search is working</span><strong class="check-fail">Fail</strong><pre>Error: A visible search control should be available
+
+[2mexpect([22m[31mreceived[39m[2m).[22mtoBeTruthy[2m()[22m
+
+Received: [31mundefined[39m</pre></div><div class="sanity-row"><span>Open Graph Metadata</span><strong class="check-pass">Pass</strong></div>
+          <div class="sanity-row"><span>Status Code of Page :</span><strong>200</strong></div>
+          <div class="sanity-row"><span>Overall Page Status (Pass/Fail) :</span><strong class="check-fail">Fail</strong></div>
+          <div class="sanity-row"><span>Overall Percentage for the Page Check :</span><strong class="check-fail">86%</strong></div>
+        </div>
+      </div>
+    </section><section class="card sanity-page fail" id="page-1">
+      <button class="page-summary" type="button" aria-expanded="false" aria-controls="page-details-1">
+        <span><strong>Page Name :</strong> About Us</span>
+        <span><strong>Page URL :</strong> https://www.mobilityglobal.com/en-us/about-us</span>
+        <span class="summary-chevron">+</span>
+      </button>
+      <div class="page-details" id="page-details-1" hidden>
+        <div class="sanity-grid">
+          <div class="sanity-row"><span>Page Title :</span><strong>About Us | Mobility Global</strong></div>
+          <div class="sanity-row"><span>Page Description :</span><strong>About us description</strong></div>
+          <div class="sanity-row"><span>Page Speed :</span><strong>386 ms</strong></div>
+          <div class="sanity-row"><span>Page URL :</span><a href="https://www.mobilityglobal.com/en-us/about-us" target="_blank" rel="noopener noreferrer">https://www.mobilityglobal.com/en-us/about-us</a></div>
+          <div class="sanity-row"><span>Website Load Successfully</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Header Visible</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Footer Visible</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Logo is Clickable</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Any Critical console Errors</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Search is working</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Website Load Successfully</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Header Visible</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Footer Visible</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Logo is Clickable</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Any Critical console Errors</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Search is working</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Website Load Successfully</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Header Visible</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Footer Visible</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Logo is Clickable</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Any Critical console Errors</span><strong class="check-fail">Fail</strong><pre>Error: Critical browser errors were reported
+
+[2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+[32m- Expected  - 1[39m
+[31m+ Received  + 6[39m
+
+[32m- Array [][39m
+[31m+ Array [[39m
+[31m+   &quot;Failed to load resource: the server responded with a status of 404 ()&quot;,[39m
+[31m+   &quot;Failed to load resource: the server responded with a status of 404 ()&quot;,[39m
+[31m+   &quot;Failed to load resource: the server responded with a status of 404 ()&quot;,[39m
+[31m+   &quot;Failed to load resource: the server responded with a status of 404 ()&quot;,[39m
+[31m+ ][39m</pre></div><div class="sanity-row"><span>Search is working</span><strong class="check-pass">Pass</strong></div>
+          <div class="sanity-row"><span>Status Code of Page :</span><strong>200</strong></div>
+          <div class="sanity-row"><span>Overall Page Status (Pass/Fail) :</span><strong class="check-fail">Fail</strong></div>
+          <div class="sanity-row"><span>Overall Percentage for the Page Check :</span><strong class="check-fail">94%</strong></div>
+        </div>
+      </div>
+    </section><section class="card sanity-page fail" id="page-2">
+      <button class="page-summary" type="button" aria-expanded="false" aria-controls="page-details-2">
+        <span><strong>Page Name :</strong> Contact Us</span>
+        <span><strong>Page URL :</strong> https://www.mobilityglobal.com/en-us/contact-us</span>
+        <span class="summary-chevron">+</span>
+      </button>
+      <div class="page-details" id="page-details-2" hidden>
+        <div class="sanity-grid">
+          <div class="sanity-row"><span>Page Title :</span><strong>Contact Us | Mobility Global</strong></div>
+          <div class="sanity-row"><span>Page Description :</span><strong>Not available</strong></div>
+          <div class="sanity-row"><span>Page Speed :</span><strong>309 ms</strong></div>
+          <div class="sanity-row"><span>Page URL :</span><a href="https://www.mobilityglobal.com/en-us/contact-us" target="_blank" rel="noopener noreferrer">https://www.mobilityglobal.com/en-us/contact-us</a></div>
+          <div class="sanity-row"><span>Website Load Successfully</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Header Visible</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Footer Visible</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Logo is Clickable</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Any Critical console Errors</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Search is working</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Website Load Successfully</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Header Visible</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Footer Visible</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Logo is Clickable</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Any Critical console Errors</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Search is working</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Website Load Successfully</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Header Visible</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Footer Visible</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Logo is Clickable</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Any Critical console Errors</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Search is working</span><strong class="check-fail">Fail</strong><pre>Error: A visible search control should be available
+
+[2mexpect([22m[31mreceived[39m[2m).[22mtoBeTruthy[2m()[22m
+
+Received: [31mundefined[39m</pre></div>
+          <div class="sanity-row"><span>Status Code of Page :</span><strong>200</strong></div>
+          <div class="sanity-row"><span>Overall Page Status (Pass/Fail) :</span><strong class="check-fail">Fail</strong></div>
+          <div class="sanity-row"><span>Overall Percentage for the Page Check :</span><strong class="check-fail">94%</strong></div>
+        </div>
+      </div>
+    </section><section class="card sanity-page pass" id="page-3">
+      <button class="page-summary" type="button" aria-expanded="false" aria-controls="page-details-3">
+        <span><strong>Page Name :</strong> Search</span>
+        <span><strong>Page URL :</strong> https://www.mobilityglobal.com/en-us/search</span>
+        <span class="summary-chevron">+</span>
+      </button>
+      <div class="page-details" id="page-details-3" hidden>
+        <div class="sanity-grid">
+          <div class="sanity-row"><span>Page Title :</span><strong>Search | Mobility Global</strong></div>
+          <div class="sanity-row"><span>Page Description :</span><strong>Not available</strong></div>
+          <div class="sanity-row"><span>Page Speed :</span><strong>303 ms</strong></div>
+          <div class="sanity-row"><span>Page URL :</span><a href="https://www.mobilityglobal.com/en-us/search" target="_blank" rel="noopener noreferrer">https://www.mobilityglobal.com/en-us/search</a></div>
+          <div class="sanity-row"><span>Website Load Successfully</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Header Visible</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Footer Visible</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Logo is Clickable</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Any Critical console Errors</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Search is working</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Website Load Successfully</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Header Visible</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Footer Visible</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Logo is Clickable</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Any Critical console Errors</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Search is working</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Website Load Successfully</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Header Visible</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Footer Visible</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Logo is Clickable</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Any Critical console Errors</span><strong class="check-pass">Pass</strong></div><div class="sanity-row"><span>Search is working</span><strong class="check-pass">Pass</strong></div>
+          <div class="sanity-row"><span>Status Code of Page :</span><strong>200</strong></div>
+          <div class="sanity-row"><span>Overall Page Status (Pass/Fail) :</span><strong class="check-pass">Pass</strong></div>
+          <div class="sanity-row"><span>Overall Percentage for the Page Check :</span><strong class="check-pass">100%</strong></div>
+        </div>
+      </div>
+    </section><footer>Live URL sanity checks</footer></div><aside class="sidebar"><div class="search-wrap"><input id="search" type="search" placeholder="Search page URL or name…" autocomplete="off"></div><ul id="nav-list">
+    <li data-label="home https://www.mobilityglobal.com/">
+      <a href="#page-0"><span class="dot fail"></span><strong>Home</strong><br><span>https://www.mobilityglobal.com/</span></a>
+    </li>
+    <li data-label="about us https://www.mobilityglobal.com/en-us/about-us">
+      <a href="#page-1"><span class="dot fail"></span><strong>About Us</strong><br><span>https://www.mobilityglobal.com/en-us/about-us</span></a>
+    </li>
+    <li data-label="contact us https://www.mobilityglobal.com/en-us/contact-us">
+      <a href="#page-2"><span class="dot fail"></span><strong>Contact Us</strong><br><span>https://www.mobilityglobal.com/en-us/contact-us</span></a>
+    </li>
+    <li data-label="search https://www.mobilityglobal.com/en-us/search">
+      <a href="#page-3"><span class="dot pass"></span><strong>Search</strong><br><span>https://www.mobilityglobal.com/en-us/search</span></a>
+    </li></ul><p id="no-results">No pages match.</p></aside><script>
+    const input=document.getElementById('search'); const items=document.querySelectorAll('#nav-list li[data-label]');
+    input.addEventListener('input',()=>{const q=input.value.trim().toLowerCase();let visible=0;items.forEach(item=>{const match=!q||item.dataset.label.includes(q);item.classList.toggle('hidden',!match);visible+=match?1:0;});document.getElementById('no-results').style.display=visible?'none':'block';});
+    document.querySelectorAll('.page-summary').forEach(button=>button.addEventListener('click',()=>{const details=document.getElementById(button.getAttribute('aria-controls'));const open=button.getAttribute('aria-expanded')==='true';button.setAttribute('aria-expanded',String(!open));details.hidden=open;button.querySelector('.summary-chevron').textContent=open?'+':'−';}));
+    document.querySelectorAll('.sanity-page').forEach(card=>{const link=document.querySelector('a[href="#'+card.id+'"]');if(link) new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){document.querySelectorAll('#nav-list a.active').forEach(a=>a.classList.remove('active'));link.classList.add('active');}}),{threshold:.25}).observe(card);});
+  </script></body></html>

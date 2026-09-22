@@ -1,0 +1,19 @@
+[
+  {
+    "name": "Home",
+    "url": "https://www.mobilityglobal.com/",
+    "isHome": true
+  },
+  {
+    "name": "About Us",
+    "url": "https://www.mobilityglobal.com/en-us/about-us"
+  },
+  {
+    "name": "Contact Us",
+    "url": "https://www.mobilityglobal.com/en-us/contact-us"
+  },
+  {
+    "name": "Search",
+    "url": "https://www.mobilityglobal.com/en-us/search"
+  }
+]

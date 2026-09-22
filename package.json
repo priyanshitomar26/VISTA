@@ -6,6 +6,7 @@
     "config:init": "node scripts/generate-pages-excel.js",
     "config:reset": "node scripts/generate-pages-excel.js --force",
     "test": "playwright test",
+    "sanity": "node scripts/run-sanity.js",
     "test:headed": "playwright test --headed",
     "test:ui": "playwright test --ui",
     "report": "playwright show-report",
@@ -16,7 +17,7 @@
     "diff": "node scripts/run-visual-diff.js",
     "diff:desktop": "node scripts/run-visual-diff.js desktop",
     "diff:mobile": "node scripts/run-visual-diff.js mobile",
-    "clean": "rimraf test-results playwright-report screenshots diff-report"
+    "clean": "rimraf test-results playwright-report screenshots diff-report sanity-report"
   },
   "dependencies": {
     "@e965/xlsx": "^0.20.3",
