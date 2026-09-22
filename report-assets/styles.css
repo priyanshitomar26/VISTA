@@ -66,14 +66,16 @@ header strong { color: var(--txt); }
   min-width: 100px;
 }
 
-.stat span {
+.stat > span:first-child {
   display: block;
   font-size: 2.2rem;
   font-weight: 700;
   line-height: 1.1;
 }
 
+.stat > span:not(:first-child),
 .stat label {
+  display: block;
   font-size: 0.72rem;
   color: var(--muted);
   text-transform: uppercase;
