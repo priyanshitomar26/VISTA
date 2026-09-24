@@ -55,6 +55,11 @@ The command runs every configured URL on three desktop browser projects:
 
 The report opens automatically at `sanity-report/index.html`. Each page is shown as one expandable result. The sidebar search accepts either the page name or URL.
 
+The report counts checks across all browser projects, while `Pages` counts unique URLs. Each URL runs six checks: page load and HTTP status, header, footer, logo navigation, console errors, and search. The Home URL also runs an Open Graph metadata check. For example, five configured URLs produce `(4 x 6 + 1 x 7) x 3 (broswers) = 93` total checks across Chrome, Edge, and WebKit. 
+#6 checks: load, header, footer, logo, console errors, search
+Home page adds 1 Open Graph check
+Tests run in 3 browsers: Chrome, Edge, Safari
+
 Checks include:
 
 - Page loads successfully

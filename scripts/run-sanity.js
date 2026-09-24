@@ -28,17 +28,16 @@ const result = spawnSync(
     '--project=edge-desktop',
     '--project=safari-desktop',
     '--workers=4',
-    '--reporter=json',
+    '--reporter=list,json',
   ],
   {
     encoding: 'utf8',
     windowsHide: false,
     shell: process.platform === 'win32',
+    stdio: 'inherit',
     env: { ...process.env, PLAYWRIGHT_JSON_OUTPUT_FILE: JSON_RESULTS },
   },
 );
-
-if (result.stderr) process.stderr.write(result.stderr);
 
 let reportData;
 try {

@@ -24,14 +24,27 @@ const firstVisible = async (locators: Locator[]): Promise<Locator | undefined> =
   return undefined;
 };
 
+const firstEnabledVisible = async (locators: Locator[]): Promise<Locator | undefined> => {
+  for (const locator of locators) {
+    const candidate = locator.first();
+    if (
+      (await candidate.isVisible().catch(() => false)) &&
+      (await candidate.isEnabled().catch(() => false))
+    ) {
+      return candidate;
+    }
+  }
+  return undefined;
+};
+
 async function findSearchControl(page: Page, selector?: string): Promise<Locator | undefined> {
   if (selector) {
     return firstVisible([page.locator(selector)]);
   }
 
   const searchPageInput = page.locator('input.search-input');
+  await searchPageInput.first().waitFor({ state: 'visible', timeout: 5_000 }).catch(() => {});
   if (await searchPageInput.count()) {
-    await searchPageInput.first().waitFor({ state: 'attached', timeout: 5_000 }).catch(() => {});
     await searchPageInput.first().scrollIntoViewIfNeeded();
     return (await searchPageInput.first().isVisible().catch(() => false))
       ? searchPageInput.first()
@@ -46,7 +59,7 @@ async function findSearchControl(page: Page, selector?: string): Promise<Locator
   ]);
   if (searchInput) return searchInput;
 
-  const searchTrigger = await firstVisible([
+  const searchTrigger = await firstEnabledVisible([
     page.getByRole('button', { name: /search/i }),
     page.getByRole('link', { name: /search/i }),
   ]);
@@ -60,7 +73,13 @@ async function findSearchControl(page: Page, selector?: string): Promise<Locator
   }
 
   await page.waitForTimeout(1_500);
-  const delayedSearchTrigger = await firstVisible([
+  await searchPageInput.first().waitFor({ state: 'visible', timeout: 5_000 }).catch(() => {});
+  if (await searchPageInput.first().isVisible().catch(() => false)) {
+    await searchPageInput.first().scrollIntoViewIfNeeded();
+    return searchPageInput.first();
+  }
+
+  const delayedSearchTrigger = await firstEnabledVisible([
     page.getByRole('button', { name: /search/i }),
     page.getByRole('link', { name: /search/i }),
   ]);
@@ -97,7 +116,7 @@ for (const pageConfig of pages) {
       await page.goto(pageConfig.url, { waitUntil: 'load' });
       const footer = page.locator(
         pageConfig.footerSelector ??
-          'footer.footer-wrapper, footer.footer-wrapper > .footer.block[data-block-name="footer"]',
+          'footer.footer-wrapper, footer.footer-wrapper > .footer.block[data-block-name="footer"], footer, [role="contentinfo"]',
       ).first();
       await page.waitForTimeout(2_000);
       await page.evaluate(async () => {
