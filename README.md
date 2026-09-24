@@ -55,10 +55,7 @@ The command runs every configured URL on three desktop browser projects:
 
 The report opens automatically at `sanity-report/index.html`. Each page is shown as one expandable result. The sidebar search accepts either the page name or URL.
 
-The report counts checks across all browser projects, while `Pages` counts unique URLs. Each URL runs six checks: page load and HTTP status, header, footer, logo navigation, console errors, and search. The Home URL also runs an Open Graph metadata check. For example, five configured URLs produce `(4 x 6 + 1 x 7) x 3 (broswers) = 93` total checks across Chrome, Edge, and WebKit. 
-#6 checks: load, header, footer, logo, console errors, search
-Home page adds 1 Open Graph check
-Tests run in 3 browsers: Chrome, Edge, Safari
+The report counts checks across all browser projects, while `Pages` counts unique URLs. Each URL runs six checks: page load and HTTP status, header, footer, logo navigation, console errors, and search. The Home URL also runs an Open Graph metadata check. For example, five configured URLs produce `(4 x 6 + 1 x 7) x 3 = 93` total checks across Chrome, Edge, and WebKit.
 
 Checks include:
 
@@ -74,6 +71,16 @@ Checks include:
 Expanded page details also show page speed, page title, page description, overall pass/fail status, and the percentage of checks passed. Page title is read from `meta property="og:title"`. Page description is read from `meta name="description"`, with Open Graph fallback support.
 
 The command returns a non-zero exit code when any browser check fails, but still generates the HTML report with failure details.
+
+## Pull Request Checks
+
+The workflow is in `.github/workflows/qa-checks.yml`. It runs locally for QA-repository pull requests targeting:
+
+- `Develop`
+- `Stage`
+- `main`
+
+It also supports manual runs and reusable calls from another repository. The complete EDS repository setup, caller workflow, secret configuration, branch migration notes, and preview URL guidance are documented in [EDS-SETUP.md](EDS-SETUP.md).
 
 ## Visual Comparison
 

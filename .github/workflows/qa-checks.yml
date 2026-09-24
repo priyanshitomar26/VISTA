@@ -1,0 +1,93 @@
+name: QA checks
+
+on:
+  pull_request:
+    branches: [Develop, Stage, main]
+  workflow_call:
+    inputs:
+      qa_ref:
+        description: QA repository ref containing the tests
+        required: false
+        type: string
+        default: main
+    secrets:
+      QA_REPO_TOKEN:
+        description: Token with read access to the QA repository
+        required: false
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sanity:
+    name: Sanity checks
+    runs-on: windows-latest
+    steps:
+      - name: Checkout QA repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.event_name == 'workflow_call' && 'Mobility-Global/mobility-global-qa' || github.repository }}
+          ref: ${{ github.event_name == 'workflow_call' && inputs.qa_ref || github.ref }}
+          token: ${{ secrets.QA_REPO_TOKEN || github.token }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright WebKit
+        run: npx playwright install webkit
+
+      - name: Run sanity checks
+        run: npm run sanity
+
+      - name: Upload sanity report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sanity-report
+          path: |
+            sanity-report/
+            test-results/
+          if-no-files-found: warn
+
+  visual:
+    name: Visual comparison
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout QA repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.event_name == 'workflow_call' && 'Mobility-Global/mobility-global-qa' || github.repository }}
+          ref: ${{ github.event_name == 'workflow_call' && inputs.qa_ref || github.ref }}
+          token: ${{ secrets.QA_REPO_TOKEN || github.token }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run visual comparison
+        run: npm run diff
+
+      - name: Upload visual report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-report
+          path: |
+            diff-report/
+            screenshots/
+          if-no-files-found: warn
