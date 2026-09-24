@@ -36,22 +36,25 @@ export default defineConfig({
 
   projects: [
     {
-      name: 'chromium-desktop',
+      name: 'chrome-desktop',
       use: {
         ...devices['Desktop Chrome'],
+        channel: 'chrome',
         viewport: { width: 1440, height: 900 },
       },
     },
     {
-      name: 'chromium-mobile',
+      name: 'edge-desktop',
       use: {
-        ...devices['iPhone 14'],
+        ...devices['Desktop Chrome'],
+        channel: 'msedge',
+        viewport: { width: 1440, height: 900 },
       },
     },
     {
-      name: 'firefox-desktop',
+      name: 'safari-desktop',
       use: {
-        ...devices['Desktop Firefox'],
+        ...devices['Desktop Safari'],
         viewport: { width: 1440, height: 900 },
       },
     },

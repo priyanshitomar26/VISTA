@@ -1,156 +1,161 @@
-**EDS Visual Testing** : This code based is for Playwright-based visual regression suite that compares every configured EDS page on the **SOURCE** (dev) environment against the **TARGET** (production) environment.
+# EDS Visual Testing
 
----
-
-## Project Structure
-
-```
-├── config/
-│   ├── pages.xlsx               # SOURCE/TARGET URLs + page list (edit this)
-│   ├── excel-loader.js          # Reads pages.xlsx
-│   ├── pages.config.ts          # TypeScript entry (used by Playwright tests)
-│   └── pages.config.js          # CommonJS entry (used by Node.js scripts)
-├── report-assets/
-│   └── styles.css               # External CSS for the HTML diff report
-├── scripts/
-│   ├── generate-pages-excel.js  # Creates config/pages.xlsx template
-│   ├── run-visual-diff.js       # All-in-one: capture → diff → open report
-│   ├── report-builder.js        # Shared HTML report builder (used by scripts above)
-│   ├── capture-screenshots.js   # Standalone screenshot capture only
-│   └── generate-diff-report.js  # Diff + HTML report generation only
-├── tests/
-│   ├── visual/
-│   │   └── eds-visual.spec.ts   # Playwright visual regression tests
-│   └── capture/
-│       └── capture.spec.ts      # Screenshot capture via Playwright test runner
-├── utils/
-│   ├── page-helpers.ts          # Navigation, lazy-load, animation helpers
-│   └── image-diff.ts            # pixelmatch wrapper
-├── playwright.config.ts
-├── tsconfig.json
-└── package.json
-```
-
----
+Playwright-based visual comparison and live sanity testing for Mobility Global pages.
 
 ## Quick Start
 
-### 1. Install
-
 ```bash
 npm install
-npx playwright install chromium firefox
-npm run config:init   # creates config/pages.xlsx if missing
+npx playwright install chromium webkit
 ```
 
-### 2. Workflow A — Playwright Visual Regression (recommended)
+Chrome and Microsoft Edge must also be installed locally. The Safari check uses Playwright WebKit, which is the cross-platform Safari engine.
 
-This uses Playwright's built-in snapshot comparison.
+## Project Structure
+
+```text
+config/
+  pages.xlsx              Visual comparison page configuration
+  sanity-urls.json        Editable live URLs for sanity checks
+  pages.config.ts         TypeScript visual-test configuration
+  pages.config.js         CommonJS visual-script configuration
+report-assets/
+  styles.css              Shared report styling
+scripts/
+  run-sanity.js           Runs sanity tests and opens the sanity report
+  sanity-report-builder.js Builds the sanity HTML report
+  run-visual-diff.js      Captures, compares, and opens the visual report
+  report-builder.js       Builds the visual comparison report
+  capture-screenshots.js  Captures source/target screenshots
+  generate-diff-report.js Builds a report from existing screenshots
+tests/
+  sanity.spec.ts          Live URL checks
+  visual/                 Visual regression tests
+  capture/                Screenshot capture tests
+utils/
+  page-helpers.ts         Navigation and page-state helpers
+  image-diff.ts           Pixel comparison helper
+```
+
+## Sanity Automation
+
+Edit [config/sanity-urls.json](config/sanity-urls.json) to add, remove, or rename URLs. The URL is the source of the displayed page name: `/` becomes `Home`, `/about-us` becomes `About Us`, and so on.
+
+Run the checks with:
 
 ```bash
-# First run: captures TARGET as the baseline
-npx playwright test tests/visual/eds-visual.spec.ts --project=chromium-desktop
-
-# Subsequent runs: SOURCE is compared against the saved TARGET baseline
-npx playwright test tests/visual/eds-visual.spec.ts
-
-# Update baselines after intentional changes
-npx playwright test tests/visual/eds-visual.spec.ts --update-snapshots
-
-# Open the HTML report
-npm run report
+npm run sanity
 ```
 
-### 3. Workflow B — Side-by-Side Diff Report
+The command runs every configured URL on three desktop browser projects:
 
-Captures screenshots with Node.js and generates a standalone HTML report.
+- Chrome
+- Microsoft Edge
+- Safari engine via Playwright WebKit
+
+The report opens automatically at `sanity-report/index.html`. Each page is shown as one expandable result. The sidebar search accepts either the page name or URL.
+
+The report counts checks across all browser projects, while `Pages` counts unique URLs. Each URL runs six checks: page load and HTTP status, header, footer, logo navigation, console errors, and search. The Home URL also runs an Open Graph metadata check. For example, five configured URLs produce `(4 x 6 + 1 x 7) x 3 (broswers) = 93` total checks across Chrome, Edge, and WebKit. 
+#6 checks: load, header, footer, logo, console errors, search
+Home page adds 1 Open Graph check
+Tests run in 3 browsers: Chrome, Edge, Safari
+
+Checks include:
+
+- Page loads successfully
+- HTTP status code
+- Header visibility
+- Footer presence
+- Header logo navigation to Home
+- Critical console errors
+- Search functionality
+- Home page Open Graph metadata
+
+Expanded page details also show page speed, page title, page description, overall pass/fail status, and the percentage of checks passed. Page title is read from `meta property="og:title"`. Page description is read from `meta name="description"`, with Open Graph fallback support.
+
+The command returns a non-zero exit code when any browser check fails, but still generates the HTML report with failure details.
+
+## Visual Comparison
+
+Visual comparison uses the pages in `config/pages.xlsx`. Each row contains a source URL, target URL, page name, and optional capture settings.
+
+Run the complete visual workflow with:
 
 ```bash
-# Step 1: Capture screenshots (both envs, all viewports)
-npm run capture:all
-
-# Step 2: Generate HTML diff report
-npm run diff:report
-
-# Open diff-report/index.html in your browser
+npm run diff
 ```
 
-You can also capture individual environments:
+This captures source and target screenshots for desktop and mobile, computes pixel differences, and opens `diff-report/index.html`.
+
+Related commands:
 
 ```bash
-npm run capture:source   # SOURCE only
-npm run capture:target   # TARGET only
+npm run capture:source   # Capture source screenshots
+npm run capture:target   # Capture target screenshots
+npm run capture:all      # Capture both environments
+npm run diff:report      # Build a report from existing screenshots
+npm run diff:desktop     # Run visual diff for desktop only
+npm run diff:mobile      # Run visual diff for mobile only
 ```
 
-Or run capture + diff + open report in one step:
+The visual report shows source, target, and diff images with page URLs, viewport grouping, pass/fail status, and page search.
+
+## Visual Page Configuration
+
+Create the workbook if it does not exist:
 
 ```bash
-npm run diff             # all viewports
-npm run diff:desktop     # desktop only
-npm run diff:mobile      # mobile only
+npm run config:init
 ```
 
-### Reading the diff report
+Regenerate the default workbook:
 
-- Cards appear in the same order as the **S No.** rows in `pages.xlsx`, grouped by viewport.
-- Each card shows the exact SOURCE and TARGET URL that was captured for that row.
-- The sidebar groups results by viewport and starts collapsed — click **Desktop** / **Mobile** to expand, or type in the search box to auto-expand matches.
-- Rows removed from `pages.xlsx` are ignored even if their old screenshots are still on disk. Run `npm run clean` to remove them.
-- Every run overwrites `diff-report/index.html` and the PNGs under `screenshots/` — no history is kept.
-
----
-
-## Adding / Removing Pages
-
-Open `config/pages.xlsx` (sheet **Pages**) and add a row — one row = one comparison:
-
-| S No. | SOURCE_BASE_URL | TARGET_BASE_URL | Page Name | fullPage | waitForSelector | waitMs | skip | maskSelectors |
-|---|---|---|---|---|---|---|---|---|
-| 1 | https://www.google.com | https://www.amazon.in | Home | TRUE | body | | FALSE | |
-| 2 | https://certification.adobe.com/courses | https://certification.adobe.com/courses/1064 | Course Page | TRUE | body | | FALSE | .ad-slot, .carousel |
-
-- `SOURCE_BASE_URL` / `TARGET_BASE_URL` are the **full URLs** to compare — they can point at different sites entirely.
-- If a row leaves a URL blank, the first row's URL is used. An optional `path` column is appended to the URL when present.
-- `fullPage` / `skip` accept `TRUE`/`FALSE` (defaults: `fullPage` TRUE, `skip` FALSE).
-- `maskSelectors` is a comma-separated list of CSS selectors.
-- Set `skip` to `TRUE` to temporarily exclude a row without deleting it.
-
-Just save the workbook and re-run any command — no code changes needed. Run `npm run config:reset` to regenerate the workbook from defaults (overwrites it).
-
----
-
-## Configuration
-
-| File | What to change |
-|---|---|
-| `config/pages.xlsx` | SOURCE/TARGET URLs, add/remove pages, selectors, masked elements |
-| `playwright.config.ts` | Diff threshold (`maxDiffPixelRatio`), viewports, browsers |
-| `scripts/generate-diff-report.js` | `THRESHOLD` constant (per-pixel colour tolerance) |
-
----
-
-## Diff Thresholds
-
-- **`threshold`** (pixelmatch) — per-pixel colour tolerance `0`–`1`. Default: `0.1`  
-- **`maxDiffPixelRatio`** (Playwright) — max fraction of changed pixels before a test fails. Default: `0.05` (5%)  
-
-Lower values = stricter comparison.
-
----
-
-## CI Integration
-
-```yaml
-# .github/workflows/visual.yml (example)
-- name: Install dependencies
-  run: npm ci && npx playwright install --with-deps chromium
-
-- name: Run visual tests
-  run: npx playwright test tests/visual/eds-visual.spec.ts --project=chromium-desktop
-
-- name: Upload report
-  uses: actions/upload-artifact@v4
-  with:
-    name: playwright-report
-    path: playwright-report/
+```bash
+npm run config:reset
 ```
+
+The `Pages` sheet supports these columns:
+
+| Column | Description |
+| --- | --- |
+| `S No.` | Display/order number |
+| `SOURCE_BASE_URL` | Source URL |
+| `TARGET_BASE_URL` | Target URL |
+| `Page Name` | Report name |
+| `fullPage` | Capture the full page, default `TRUE` |
+| `waitForSelector` | Optional selector to wait for |
+| `waitMs` | Additional wait time in milliseconds |
+| `skip` | Exclude the row when `TRUE` |
+| `maskSelectors` | Comma-separated dynamic-element selectors |
+
+## Other Commands
+
+```bash
+npm test                 # Run configured Playwright tests
+npm run test:headed      # Run tests in headed mode
+npm run test:ui          # Open Playwright UI mode
+npm run report           # Open the Playwright HTML report
+npm run clean            # Remove generated reports and screenshots
+```
+
+## Browser Projects
+
+The Playwright projects are defined in [playwright.config.ts](playwright.config.ts):
+
+- `chrome-desktop` uses the installed Chrome channel
+- `edge-desktop` uses the installed Microsoft Edge channel
+- `safari-desktop` uses Playwright WebKit
+
+The sanity runner uses all three projects. Visual tests can target a project explicitly:
+
+```bash
+npx playwright test tests/visual/eds-visual.spec.ts --project=chrome-desktop
+```
+
+## Thresholds
+
+- Visual pixel tolerance is configured in `scripts/generate-diff-report.js`.
+- Playwright screenshot tolerance is configured in `playwright.config.ts`.
+- Sanity checks fail the overall page when any individual check fails.
+
+Generated folders such as `sanity-report`, `diff-report`, `playwright-report`, `screenshots`, and `test-results` are removed by `npm run clean`.
