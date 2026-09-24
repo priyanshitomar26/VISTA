@@ -75,6 +75,16 @@ Expanded page details also show page speed, page title, page description, overal
 
 The command returns a non-zero exit code when any browser check fails, but still generates the HTML report with failure details.
 
+## Pull Request Checks
+
+The workflow is in `.github/workflows/qa-checks.yml`. It runs locally for QA-repository pull requests targeting:
+
+- `Develop`
+- `Stage`
+- `main`
+
+It also supports manual runs and reusable calls from another repository. The complete EDS repository setup, caller workflow, secret configuration, branch migration notes, and preview URL guidance are documented in [EDS-SETUP.md](EDS-SETUP.md).
+
 ## Visual Comparison
 
 Visual comparison uses the pages in `config/pages.xlsx`. Each row contains a source URL, target URL, page name, and optional capture settings.
