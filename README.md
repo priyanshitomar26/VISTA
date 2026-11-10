@@ -1,7 +1,7 @@
 <<<<<<< HEAD
-# EDS Visual Testing
+# Visual Testing
 
-Playwright-based visual comparison and live sanity testing for Mobility Global pages.
+Playwright-based visual comparison and live sanity testing for Telefonica.
 
 ## Quick Start
 
