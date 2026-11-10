@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # EDS Visual Testing
 
 Playwright-based visual comparison and live sanity testing for Mobility Global pages.
@@ -169,3 +170,7 @@ npx playwright test tests/visual/eds-visual.spec.ts --project=chrome-desktop
 - Sanity checks fail the overall page when any individual check fails.
 
 Generated folders such as `sanity-report`, `diff-report`, `playwright-report`, `screenshots`, and `test-results` are removed by `npm run clean`.
+=======
+# VISTA
+This codebase is for Testing Automation Framework 
+>>>>>>> 9400406c57636c3af68ea6354015aeec3f9cc6c6
